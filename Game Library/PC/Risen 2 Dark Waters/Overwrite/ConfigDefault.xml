@@ -104,9 +104,9 @@
 			VegetationRenderingEnabled="true"
 			ViewDistance="3"
 			zBias="0.050"
-			zFarHigh="240000.00"
-			zFarMedium="120000.00"
-			zFarLow="60000.00"			
+			zFarHigh="480000.00"
+			zFarMedium="240000.00"
+			zFarLow="120000.00"			
 			zNear="25.00"
       MSAA="0"
 			>
@@ -159,7 +159,7 @@
             EnableTerrainShadows="true"
             TerrainShadowMapSize="512"
 	          TerrainShadowMapMaxDistance="80000.0"
-            ScreenSpaceAmbientOcclison="true"
+            ScreenSpaceAmbientOcclison="false"
 			      SoftShadows="true"
         >
         </Medium>
@@ -172,14 +172,14 @@
 	          EnableTerrainShadows="true"
 	          TerrainShadowMapSize="1024"
 	          TerrainShadowMapMaxDistance="100000.0"
-	          ScreenSpaceAmbientOcclison="true"
+	          ScreenSpaceAmbientOcclison="false"
 			      SoftShadows="true"
         >
         </High>
         <Ultra
-						DetailShadowMapCount="3"
+						DetailShadowMapCount="4"
 	          DetailShadowMapSize="2048"
-	          DetailShadowMapSplitFactor="0.2000"
+	          DetailShadowMapSplitFactor="0.1000"
 	          DetailShadowMapViewRange="15000.000000"
 	          EnableDetailShadows="true"
 	          EnableTerrainShadows="true"
@@ -193,12 +193,12 @@
     </Render>
 	<Terrain
 		Quality="High"		
-		ReflectionQuality="Low"
+		ReflectionQuality="High"
 		OcclusionQuality="Occlusion"
 		>
 		<Ultra
-			PixelErrorThreshold="8"
-			SlopeErrorThreshold="0.05"
+			PixelErrorThreshold="9"
+			SlopeErrorThreshold="0.1"
 			MinLevel="0"
 		>
 		</Ultra>
@@ -827,13 +827,13 @@
       <High
           ViewRange="4500.000000"
           Enabled="True"
-          Density="3"
+          Density="2"
         >
       </High>
       <Ultra
-          ViewRange="9000.000000"
+          ViewRange="15000.000000"
           Enabled="True"
-          Density="2"
+          Density="1"
         >
       </Ultra>
     </Vegetation>
@@ -917,23 +917,23 @@
 				NPC_Small="2000.0"
 				NPC_Medium="4000.0"
 				NPC_Large="6000.0"
-				Level_Small="9000.0"
-				Level_Medium="15000.0"
+				Level_Small="56000.0"
+				Level_Medium="90000.0"
 				Level_Large="225000.0"
-				Object_Small="4000.0"
-				Object_Medium="9000.0"
-				Object_Large="13000.0"
-				SpeedTree_Small="7500.0"
-				SpeedTree_Medium="12500.0"
-				SpeedTree_Large="17500.0"
+				Object_Small="32000.0"
+				Object_Medium="72000.0"
+				Object_Large="108000.0"
+				SpeedTree_Small="12500.0"
+				SpeedTree_Medium="25000.0"
+				SpeedTree_Large="35000.0"
 				Events_Small="5000.0"
 				Events_Medium="7500.0"
 				Events_Large="9000.0"
-				Effects_Small="5000.0"
-				Effects_Medium="9000.0"
-				Effects_Large="15000.0"
-				Lights="9000.0"
-				Terrain="100000.0"				
+				Effects_Small="9500.0"
+				Effects_Medium="15000.0"
+				Effects_Large="20000.0"
+				Lights="15000.0"
+				Terrain="115000.0"				
 			>
 			</High>
 		</Scene>
