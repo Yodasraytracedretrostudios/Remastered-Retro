@@ -1,0 +1,48 @@
+!Resolution(i,i)
+!WindowOffset(i,i)
+!Monitor(i)            // -1 primary monitor
+!BPP(i)
+!FSAA(i)               // Full Screen AntiAliasing, 0 - none, higher is better
+!TexBPP(i)
+!TextureQuality(s)     // VeryLow, Low, High
+!Filtering(s)          // Bilinear, Trilinear, Anisotropic, AnisotropicTrilinear
+!GammaFloat(f)
+!MaxRefresh(i)
+!Shadows(s)            // Low, High
+!ShadowMapSize(i)
+!Lightmaps()
+!Fullscreen()
+!VSync()               // enable vertical sync
+!MaterialQuality(i)    // lower is better
+!WaterQuality(i)       // lower is better
+!GrassQuality(i)       // lower is better
+!FXQuality(i)          // higher is better
+!FXFadeLevel(i)        // 0-4 (lower is better)
+!EnvQuality(s)         // FullDynamic, RareDynamic, Static
+!ShaderPath(i)         // 0 - 1.1, 1 - 1.4, 2 - 2.0, 3 - 3.0, 4 - x360, 5 - 4.0, 6 - ps3
+!PostProcess(s)        // Simple, Normal
+!DisplayDeviceType(i,f,f,f,f)  //device type (LCD TV etc.): 0 - default
+!Curves(s)             // curves texure
+
+Resolution(2560,1440)
+Monitor(0)
+BPP(24)
+FSAA(0)
+TexBPP(32)
+TextureQuality("High")
+Filtering("Trilinear")
+Fullscreen()
+Shadows("High")
+ShadowMapSize(4096)
+Lightmaps()
+GammaFloat(1.00)
+MaxRefresh(60)
+MaterialQuality(0)
+FXQuality(3)
+FXFadeLevel(2)
+WaterQuality(0)
+GrassQuality(0)
+EnvQuality("FullDynamic")
+ShaderPath(3)
+Postprocess("Simple")
+DisplayDeviceType(0,0.000000,1.000000,1.000000,1.000000)
