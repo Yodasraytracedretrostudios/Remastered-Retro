@@ -1,0 +1,707 @@
+This is a patch for Kingpin that fixes a number of bugs, and adds some other
+improvements too (see the lists below). No files are modified by the patch, so
+it works with all Kingpin (v1.21) releases, including the Steam version. The
+WSOCK32.DLL file is the patch that gets loaded by Kingpin and PATCHCFG.EXE is a
+configuration app for the patch. Both files should be put in your Kingpin
+directory.
+
+If you have Kingpin installed under "Program Files" or "Program Files (x86)"
+then you may need to run PATCHCFG.EXE as administrator (right-click on it) for
+it to be able to write the patch's PATCH.CFG config file.
+
+
+New features and tweaks
+=======================
+More screen resolution options
+  All resolutions supported by the video card are included in the video mode
+  option in the "visuals" menu. A custom resolution can also be set via a new
+  "vid_size" console variable (eg. "set vid_size 1024x768"). Fullscreen mode
+  can be set to always use the native/desktop resolution, in which case the
+  video mode setting only applies to windowed mode. Both options can also be
+  set in the PATCHCFG app, to override the in-game setting every time Kingpin
+  in started. The current resolution is now added to the "gl_mode" console
+  variable (which is sent to servers) as well as being in the new "vid_size"
+  console variable.
+
+Resizable window
+  When running in windowed mode, the size of the Kingpin window can be adjusted
+  by dragging the edges. Note this is only possible when the "fullscreen mode"
+  option is set to "native", so that an irregular windowed resolution does not
+  prevent fullscreen mode working.
+
+FOV auto-adjustment
+  The PATCHCFG app gives the option (enabled by default) of automatically
+  adjusting the FOV to maintain the same vertical view with any aspect ratio.
+  This results in the horizontal view expanding, instead of the vertical view
+  shrinking, when using a widescreen aspect ratio. The "fov" console variable
+  is unchanged by this (the adjustment is applied on top of that).
+
+Improved support for any size of image
+  Standard Kingpin limits images/textures to 256x256 pixels and anything larger
+  gets reduced, losing detail. It also resizes any images/textures that are not
+  a power of 2 (256/128/64/etc) because they needed to be a power of 2 in the
+  past, again losing detail. Both of those limitations are removed now, so
+  affected images/textures are shown in higher quality. The "texture quality"
+  option (gl_maxtexsize) has been removed from the "visuals" menu as it no
+  longer has any effect. If wanted, power of 2 images can be re-enabled by
+  setting the new "gl_pow2" console variable to "1" ("vid_restart" is needed
+  after changes).
+
+Anisotropic filtering
+  A new anisotropic filtering option is available in the "visuals" menu and a
+  "gl_anisotropy" console variable. When enabled, it keeps images/textures
+  looking sharp when they are viewed at an angle. Higher settings allow it to
+  have effect at greater angles and distances. Note this setting may be
+  overridden in the video card's control panel.
+
+Anti-aliasing
+  A new multisample anti-aliasing (MSAA) option is available in the "visuals"
+  menu and a "gl_multisample" console variable. When enabled, anti-aliasing
+  smooths jagged edges. Higher settings are smoother but more demanding. Note
+  this setting may be overridden in the video card's control panel.
+
+Vertical sync setting
+  A new vertical sync option is available in the "visuals" menu, which gives
+  access to the existing "gl_swapinterval" console variable. Setting it to "no"
+  (off) is recommended to reduce input lag. Note this setting may be overridden
+  in the video card's control panel.
+
+Improved lighting of see-through surfaces
+  See-through surfaces (eg. grills/fences/banners) now have the same lighting
+  applied as other surfaces in the same area, so that they blend in better.
+  Dynamic lighting is also now applied to those surfaces, and they can be
+  charred by explosions and flames.
+
+Improved dynamic lighting
+  The performance of dynamic lighting (and charring) is much improved so that
+  it can now be enabled on Intel GPUs without causing lag. Dynamic lights also
+  now work properly on bmodels (eg. moving platforms) and windows, and no
+  longer show on the other side of thin walls.
+
+Dynamic light disabling
+  A new dynamic lighting option is available in the "visuals" menu. When that
+  is set to "none", no dynamic lighting or charring is applied to surfaces.
+  When set to "partial", map lights and charring are enabled, but not other
+  dynamic lights like muzzle flashes or explosions. When set to "full", all
+  dynamic lights are enabled.
+
+Limited charring
+  Surface charring (eg. from explosions and flames) is limited to 75% to avoid
+  the map becoming pitch black. Charring also no longer affects the lighting of
+  players/NPCs or items except for props.
+
+Improved effect visibility
+  Effects such as flames/sparks/blood/etc are now visible through translucent
+  surfaces (eg. windows and water).
+
+Improved shadows
+  Shadows are now shaded rather than pitch-black. They also point away from the
+  nearest/strongest light sources, and are not shown for things that are a long
+  way off the ground.
+
+Hybrid directional lighting
+  A new "hybrid" setting is available for the directional lighting option
+  (which is now in the "visuals" menu) that combines the map's lightmap with
+  the normal "junior" lighting to prevent too dark shading of players/NPCs in
+  areas of the map that are bright.
+
+Maximum FPS setting
+  The maximum frames per second (cl_maxfps) can be set in the PATCHCFG app.
+  This limits the screen refresh rate and also how frequently your input is
+  sent to a server. If vertical sync is enabled then the FPS will be limited
+  to the monitor's refresh rate. It may also be limited by the server. FPS is
+  no longer limited by the "rate" setting.
+
+FPS display
+  A new FPS display option is available in the "visuals" menu and a "showfps"
+  console variable. When enabled, the current number of frames per second is
+  displayed at the bottom of the screen, along with the highest number of
+  milliseconds between 2 frames during the last second.
+
+Internet server browsing
+  A live server list is downloaded and included in the "join network server"
+  menu. A copy of the list is also written to a SERVERS.TXT file, which will
+  be used if the master server is ever unavailable. The dead "play on heat.net"
+  menu option is removed.
+
+Faster downloading
+  Download speed is no longer limited by the "rate" or "cl_maxfps" settings or
+  by vertical sync, and can now reach speeds of up to 4 MB/s if the server
+  allows. A speed limit can be set in the PATCHCFG app and a new
+  "max_download_rate" console variable can be used to change the limit in-game.
+  Downloads are also sent in fewer/larger packets when connected to a kpded2
+  server, for greater efficiency.
+
+PAK downloading tweaks
+  PAK files are downloaded (if the server offers any) before any other files,
+  to avoid separately requesting files that are in the PAKs. Only the mod's
+  directory is checked for existing PAK files (and other root directory files)
+  so that existing files in the "main" directory do not prevent mod-specific
+  client files being downloaded.
+
+PAK update downloading
+  When kicked for having old client files, the new "redownload" command can be
+  used to reconnect and download the latest PAK file(s) from the server instead
+  of visiting a website to get them.
+
+Map redownloading
+  When kicked for having an incorrect version of a map, the new "redownload"
+  command can be used to reconnect and download the map from the server.
+
+Map downloading to main
+  The PATCHCFG app gives the option (enabled by default) of having map files
+  always downloaded to the "main" directory instead of mod-specific
+  directories, to avoid wasting time and disk space on downloading duplicate
+  files.
+
+Model skin downloading
+  Skins/textures used by models (including weapon models) are downloaded from
+  the server.
+
+Model extras downloading
+  Any accessory options (hat/cigar/etc) that a custom player model has are
+  downloaded from the server.
+
+Network compression
+  When connected to a kpded2 server, game state data will be compressed when it
+  would otherwise be too large to send, instead of dropping it. This can be
+  disabled by setting the new "net_compress" console variable to "0". Note that
+  demos containing compressed data will not be playable without the patch
+  enabled. File downloads are also compressed for greater speed and lower
+  bandwidth usage.
+
+Increased entity limit
+  The entity display limit is increased from 128 to 256. This fixes the problem
+  of your gun sometimes disappearing/flickering when there is a lot of action.
+
+Visible gun with any FOV
+  You can choose in the PATCHCFG app to have your gun visible with any "fov"
+  setting, not only up to 90.
+
+Consistent HUD layout
+  The position of the HUD items and the chat text are now the same in all
+  screen resolutions and aspect ratios.
+
+HUD enlarging
+  A new hud size option is available in the "options" menu and a "hudsize"
+  console variable, to adjust the size of the HUD items and scoreboards (and
+  centered text messages) when using screen resolutions over 600 pixels high
+  (and over 1280 pixels wide for scoreboards). The minimum setting leaves
+  things at their original size.
+
+Hi-res console text
+  A hi-res font is used to show console and overlay text, adding support for
+  lowercase letters and colouring. A new console font size option is available
+  in the "options" menu and a "con_scale" console variable.
+
+Hi-res small text
+  The hi-res font is used for small text items in the HUD and for centered text
+  messages.
+
+Centered text is not logged
+  Centered text messages no longer appear in the console, which also stops the
+  overlay and chat text areas being cleared whenever a centered text message is
+  shown.
+
+Improved text input
+  Non-US keyboard layouts are now supported, and the cursor can be moved using
+  the left/right arrow keys to modify the entered text. The Ctrl key can also
+  be used to jump words, and the home/end keys to jump to the start/end of the
+  text.
+
+Highlighted non-chat text
+  Non-chat text shown in the chat area (eg. connection notifications) is shown
+  in light blue to make it more distinguishable from chat. This also applies to
+  the console when hi-res console text is enabled.
+
+Nicer scoreboard text
+  Scoreboard text now has smoother edges and a drop shadow.
+
+Chat while console is open
+  The chat area is now still shown while the console is open.
+
+Console access without developer mode
+  The console key (`) and menu option can now be used to access the console at
+  any time without needing the "developer" variable to be set to "1".
+
+Console history duplicate removal
+  When a command is repeated in the console, the old entry will be removed from
+  the console's command history (accessed by pressing the up/down keys).
+
+Larger console buffer
+  The console buffer size is now 128 KB rather than 32 KB, which allows 4 times
+  as many lines of text to be retained.
+
+Console scrolling
+  The mouse wheel can now be used to scroll the console.
+
+Console width limiting
+  The number of characters per line of console text can be limited in the
+  PATCHCFG app and in-game with a new "con_maxwidth" console variable. Shorter
+  lines allows more lines of text to be retained.
+
+Fixed console image brightness
+  The brightness (vid_gamma) setting no longer effects the console background
+  image, so that the text does not become harder to read when the brightness is
+  turned up.
+
+Console image removal
+  The console background image can be replaced with a solid colour to make the
+  text easier to read. This can be set in the PATCHCFG app and in-game with a
+  new "con_noback" console variable. A new "con_color" variable can be used to
+  change the background colour to an RGB value (from "000" to "999").
+
+Console transparency
+  The console background transparency can be set with the new "con_alpha"
+  console variable, in the range of 0 (transparent) to 1 (opaque).
+
+Console overlay lines
+  The maximum number of lines of console text that overlays the top of the
+  screen can be adjusted in the PATCHCFG app and in-game with a new
+  "con_notifylines" console variable.
+
+Chat lines
+  The maximum number of lines of text shown in the chat area can be adjusted in
+  the PATCHCFG app and in-game with a new "chatlines" console variable.
+
+Improved chat word wrapping
+  Chat area text can now be broken at hyphens too, not only spaces. Very long
+  text that exceeds the console width is also rejoined now to avoid an
+  unnecessary line break.
+
+Chat across maps
+  Chat text stays on screen across map changes.
+
+Semi-transparent graphs
+  The netgraph and timegraph backgrounds are now semi-transparent. The
+  transparency can be changed with the new "graphalpha" console variable, in
+  the range of 0 (transparent) to 1 (opaque).
+
+Wider graphs
+  The screen can now be up to 2048 pixels wide (instead of 1024 pixels) before
+  the netgraph and timegraph displays repeat.
+
+Netgraph ping range
+  The ping range covered by the netgraph display can now be set with the new
+  "netgraph_min" and "netgraph_max" console variables.
+
+Larger menus
+  Menus are drawn using a hi-res font that is sized according to the screen
+  resolution, to make them easier to read.
+
+Darkened menu background
+  The PATCHCFG app gives the option (enabled by default) of darkening the
+  background when using menus to make them easier to read.
+
+Quicker visuals option changes
+  The enter key can be used to apply changes in the "visuals" menu without
+  having to first select the "apply changes" option.
+
+More crosshairs
+  Up to 27 extra crosshairs (30 in total) can be installed for selection in the
+  "options" menu. The selected crosshair image is also shown alongside. The
+  extra crosshair files are searched in sequence until the first non-existent
+  one, so they should be added in sequence (eg. CH4.PCX first).
+
+Crosshair enlargement
+  A new crosshair size option is available in the "options" menu, and a
+  "crosshairsize" console variable.
+
+Customisable crosshair colour
+  A new "crosshair color" option is available in the "options" menu, which
+  allows the crosshair colour to be changed. It can also be set to change
+  colour with the health level. Custom RGB settings (from "000" to "999") are
+  possible with a new "crosshaircolor" console variable.
+
+Unused crosshair removal
+  The crosshair is not shown when spectating except when using eyecam mode.
+
+Targeted player name placement
+  A new "crosshair names" option is available in the "options" menu, and a
+  "crosshairnames" console variable, which allows adjustment of where the name
+  of the targeted player is shown. The amount of cash carried by the player
+  (if it is a bagman teammate) is also placed accordingly. Targeted player
+  names are also now shown during playback of demos.
+
+Weapon key binding
+  The weapons can now be bound to other keys/buttons in the "customize
+  controls" menu. A "previous weapon" option is also added to the menu.
+
+Raw mouse input
+  A new "raw mouse input" option is available in the "options" menu, which
+  enables bypassing Windows' mouse motion processing. It can also be enabled by
+  setting the "in_mouse" console variable to 2.
+
+More precise mouse movement
+  Mouse movement processing is now done in floating-point rather than integer,
+  which allows fractional mouse sensitivity settings to have the expected
+  effect.
+
+Support for 5 mouse buttons
+  If your mouse has them, 2 extra buttons (MOUSE4 and MOUSE5) can be bound in
+  the "customize controls" menu options and AUTOEXEC.CFG files.
+
+Bind reloading
+  Binds are reloaded from the "main" config whenever changing mod so that
+  mod-specific binds do not carry over to other mods. Mod-specific CONFIG.CFG
+  files are only written when they already exist and "+set game" is used in the
+  command-line because that is the only time they get loaded.
+
+Ignoring arrow key commands
+  When an arrow key is pressed, a command is sent to tell the server even if
+  those keys are bound to something else (eg. player movement). Those commands
+  are generally ignored by servers, so they are now not sent by default. The
+  command sending can be re-enabled by setting the new "cl_sendarrows" console
+  variable to "1".
+
+Improved reverb effect
+  Kingpin's built-in reverb sound effect is replaced with a better sounding
+  one. A new option is available in the "options" menu to switch back to the
+  original reverb effect or disable reverb. That option is also accessible
+  with a new "s_reverb" console variable.
+
+Custom model sounds
+  A new custom model sounds option is available in the "options" menu, and a
+  "s_models" console variable. When enabled, model-specific sounds will be
+  played instead of the usual male or female sounds when jumping/dying/etc,
+  if custom sounds are installed for the player model. The sounds will not be
+  downloaded from servers but are included with some player models that are
+  available from www.kingpin.info.
+
+Sound when inactive
+  A new "mute when inactive" option is available in the "options" menu, and a
+  "s_focus" console variable. When disabled, it allows Kingpin's sound to still
+  be heard when Kingpin is in the background.
+
+Sound quality is always high
+  The sound quality is now permanently set to high. The option has been removed
+  from the "options" menu.
+
+Improved playback of 8-bit sounds
+  The playback quality of 8-bit sounds is improved, particularly at lower
+  volume levels.
+
+Sound buffering control
+  A new "buffer / delay" option is available in the "options" menu, which gives
+  access to the existing "s_mixahead" console variable. It determines how much
+  sounds are delayed by. Note there may be glitches in the sound if it is set
+  too low.
+
+Asynchronous sound loading
+  Sound files are loaded asynchronously (in the background) so that the
+  gameplay does not get delayed and stutter in the meantime, particularly when
+  Kingpin is installed on a slower drive. This can be controlled with a new
+  "s_async" console variable (0 = disabled).
+
+JPEG screenshots
+  A new "screenshot format" option is available in the "options" menu, with the
+  option of writing screenshots in the JPEG format at various quality levels. A
+  new "screenshot_quality" console variable is also available for more control
+  over the JPEG quality level (0 = TGA). The high quality TGA format is still
+  supported and is also compressed now but the size reduction will not be as
+  great as JPEG.
+
+Screenshot filename display
+  When a screenshot is saved, its filename is displayed.
+
+New lasers
+  The existing railgun laser has been replaced with a new one that supports
+  different colours, for use in the instagib game mode (can also be used in
+  other mods). The muzzle flash is also the same colour as the laser now.
+
+Underwater rocket tweak
+  A rocket's flame trail stops when it enters water.
+
+More efficient scoreboards
+  New scoreboard layout options are supported that allow more players to be
+  shown in the scoreboards.
+
+Reduced idle bandwidth usage
+  When you are not moving, fewer packets will be sent to the server, reducing
+  bandwidth usage, and server load too.
+
+Reduced userinfo bandwidth usage
+  The "msg" and "hand" console variables are not sent to servers when they are
+  set to 0.
+
+Increased default "rate" setting
+  The default "rate" setting is now 25000 (T1/LAN) instead of 4000 (56 MODEM).
+
+Playing demos from Windows Explorer
+  DM2 demo files can be associated with Kingpin in the PATCHCFG app, which
+  allows them to be played from Windows Explorer and other software.
+
+Demo playback speed control and rewinding
+  The mouse wheel can be scrolled forward to speed up demo playback, and
+  scrolled back to slow down/pause. Scrolling back again will rewind the demo,
+  or restart it if the shift key is held down too. The demo's position is
+  displayed at the bottom of the screen then. The volume level is reduced when
+  playing at higher speeds to prevent excessive noise.
+
+Demo angle adjustment
+  The view angle can be changed during demo playback by holding down the left
+  mouse button and moving the mouse.
+
+Demo end pausing
+  Demos can be paused instead of unloaded at the end (allowing rewinding) by
+  setting the new "cl_demowait" console variable to 1.
+
+Using commands/binds while playing demos
+  Key binds can be used while playing demos (eg. to take screenshots). The
+  console can also be accessed while playing demos.
+
+Downloads excluded from demos
+  Any files that are downloaded while recording a demo are now not included in
+  the demo.
+
+F12 confirmation and disabling
+  To avoid mishaps, the F12 key can be disabled or set to ask for confirmation
+  before closing Kingpin in the "options" menu.
+
+Reset to defaults option removed
+  To avoid mishaps, the "reset to defaults" option has been removed from the
+  "options" menu. If wanted, the MAIN\CONFIG.CFG file can be deleted to revert
+  to the default config.
+
+Sorted console variables
+  The "cvarlist" command now gives a sorted list of all console variables.
+
+No empty directories created
+  Directories are no longer created for missing downloads.
+
+CPU priority boost
+  Kingpin's CPU priority is raised to reduce the chances of other processes
+  denying it CPU time and causing lag. This can be adjusted with a new
+  "win_priority" console variable. Possible values are: -2 = low, -1 = below
+  normal, 0 = normal, 1 = above normal, 2 = high. The default is 1 (above
+  normal). When the priority is raised, Kingpin will pause for a bit between
+  frames (when it has nothing to do) instead of trying to hog the CPU, so it
+  will actually use less CPU than normal.
+
+Reduced background CPU usage
+  Kingpin will pause between frames instead of trying to hog the CPU when it is
+  in the background. When Kingpin's CPU priority is raised, it will drop back
+  to normal priority while it is in the background. If it is totally inactive
+  for a while, frame processing will stop entirely to use practically no CPU.
+
+No CD check
+  The CD check is disabled so that you can play without having the CD in the
+  drive (if you are using the CD version of Kingpin).
+
+Recovery when model limit is reached
+  When the number of loaded models exceeds the limit (eg. when trying lots of
+  different player models), models that are no longer needed will be unloaded
+  instead of leaving the game with a "mod_numknown == MAX_MOD_KNOWN" error
+  message.
+
+More verbose model error messages
+  The model's filename is included in "R_DrawAliasModel" and "R_CullAliasModel"
+  error messages.
+
+Launch freeze fix
+  On Windows 7, the PATCHCFG app gives the option of applying a registry fix
+  that stops the GameUX component (from Games Explorer) blocking the first
+  launch of Kingpin after booting when it gets stuck trying to contact defunct
+  Microsoft servers. This will also affect/fix other games that GameUX deals
+  with.
+
+
+Fixed bugs
+==========
+Alt-tab does not work even when enabled in the "options" menu.
+
+Physical memory detection only works up to 2GB RAM. This bug could result in
+reduced sound and texture quality.
+
+Multiple copies of images/textures being loaded when they have uppercase
+letters in their name. This bug can result in "MAX_GLTEXTURES" errors.
+
+If a player carries a cashbag/flag while spawn protection is active, it results
+in multiple "r_cullaliasmodel" errors for everyone that sees them.
+
+Cast characters that are set to use a custom skin may not have the correct skin
+on when the pain skins option is enabled.
+
+Chat text turns to garbage in the output of the "condump" command.
+
+Crash when there have been 32768 lines of console text.
+
+Buffer overflow/crash with text messages over 4095 characters long. This bug
+prevents Kingpin running without Windows' app compatibility feature enabled.
+
+Applying any changes in the "visuals" menu results in a graphics system
+reinitialization even if the changes do not require it.
+
+Trying to change model in the "player setup" menu after a model has been
+downloaded from a server (or installed manually) can result in a crash.
+
+Memory leak when going to the console while the "player setup" menu is open.
+
+Kingpin cannot be played on a secondary monitor because the mouse is handled
+incorrectly then.
+
+Demo playback is jerky, particularly during fast movement.
+
+Looping sounds are not recorded in demos.
+
+The game directory is not updated when playing demos, possibly resulting in the
+wrong textures/sounds/etc being used.
+
+Only the first map is played back from demos that span multiple maps.
+
+Demos end early when they contain an empty message (caused by an overflow when
+the demo was recorded).
+
+Muzzle flashes are bigger in playback of multiplayer demos than they were when
+the demos were recorded.
+
+Flames from the player's flamethrower are not visible in demos.
+
+If the player is firing the flamethrower at the end of a map or when becoming a
+spectator, the flames will continue to appear on screen.
+
+When another player/NPC stops firing a flamethrower, their flames immediately
+disappear instead of dying out, and those flames then reappear if the player
+starts firing again (possibly at a different position).
+
+When a flamethrower is fired from close to a wall, the flames can disappear
+into the wall.
+
+When another player/NPC fires a flamethrower while crouching, the flames still
+appear at their standing height.
+
+The flames from the player's flamethrower are in the wrong position when
+spectating in eyecam mode.
+
+Crash when taking a screenshot before the game's directory exists.
+
+When a map's texture is missing, it may be requested from the server multiple
+times instead of just once.
+
+When changing mod, the Kingpin window is unnecessarily recreated/reinitialized.
+
+When connecting to a mod server and then a standard server, files (eg. config
+and downloads) will be written in Kingpin's root directory instead of "main".
+
+In deathmatch, the reverb sound effect is only applied to the first player
+(client 0).
+
+Distortion and panning of non-attenuated sounds.
+
+A targeted player's name is not shown when the player is behind a see-through
+surface (eg. fence or window).
+
+Targeted player names are not shown when movement prediction is disabled
+through the "cl_predict" console variable or by the server (eg. when chasing).
+
+The surface area covered by dynamic lights and charring is inconsistent across
+different texture sizes.
+
+Dynamic lights (eg. muzzle flashes and explosions) are not visible on players
+and NPCs when directional lighting is enabled.
+
+A server's instruction to disable directional lighting is ignored on the
+player's weapon, which means it may be pitch-black on some maps.
+
+The lighting of the player's weapon is incorrect when spectating in eyecam mode
+with directional lighting enabled.
+
+Laser beams are sometimes black instead of their correct colour.
+
+Semi-transparent entities may be drawn in an incorrect order, resulting in
+more distant entities overlapping closer ones.
+
+After picking up cash, the amount display does not fade-out with the cash icon.
+
+You are sometimes left facing the ceiling/floor after spawning or teleporting.
+
+The graphheight console variable (to set the height of netgraph and timegraph
+displays) does not work properly.
+
+The Esc key does not access the main menu while a scoreboard is showing.
+
+Using Alt+F4 keys to quit results in an error message.
+
+The Kingpin window sometimes re-grabs the mouse when clicking away from it.
+
+The "dir" command lists the files in a mod's directory twice.
+
+When hosting a server, renderfx2 flags with a value of 256 or above will not be
+sent to clients in some situations.
+
+Nvidia drivers automatically turn on vertical sync when it has been turned off
+in-game and the driver is set to use the game's setting in the Nvidia control
+panel.
+
+
+New/modified menu options
+=========================
+gangbang > join network server
+options > custom model sounds
+options > reverb
+options > buffer / delay
+options > mute when inactive
+options > raw mouse input
+options > crosshair
+options > crosshair size
+options > crosshair color
+options > crosshair names
+options > console font size
+options > screenshot format
+options > allow f12 to quit
+options > customize controls
+visuals > fullscreen mode
+visuals > hud size
+visuals > anisotropic filter
+visuals > anti-aliasing
+visuals > vertical sync
+visuals > dynamic lighting
+visuals > directional lighting
+visuals > show fps
+
+
+New console variables
+=====================
+chatlines
+cl_demowait
+cl_sendarrows
+con_alpha
+con_color
+con_maxwidth
+con_noback
+con_notifylines
+con_scale
+crosshaircolor
+crosshairnames
+crosshairsize
+gl_anisotropy
+gl_multisample
+gl_pow2
+graphalpha
+hudsize
+max_download_rate
+net_compress
+netgraph_max
+netgraph_min
+s_async
+s_focus
+s_models
+s_reverb
+screenshot_quality
+showfps
+vid_nativefs
+vid_size
+win_priority
+
+
+Modified console variables
+==========================
+gl_dynamic
+gl_mode
+in_mouse
+r_directional_lighting
+
+
+New commands
+============
+redownload
